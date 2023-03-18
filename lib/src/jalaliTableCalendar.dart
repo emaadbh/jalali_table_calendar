@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:jalali_table_calendar/src/persian_date.dart';
+import 'package:persian_number_utility/persian_number_utility.dart';
 
 /// Initial display mode of the date picker calendar.
 ///
@@ -169,7 +170,11 @@ class CalendarDayPicker extends StatelessWidget {
     final List<Widget> result = <Widget>[];
     for (String dayHeader in dayH) {
       result.add(ExcludeSemantics(
-        child: Center(child: Text(dayHeader)),
+        child: Center(
+          child: Text(
+            dayHeader.toPersianDigit(),
+          ),
+        ),
       ));
     }
     return result;
@@ -343,7 +348,8 @@ class CalendarDayPicker extends StatelessWidget {
                       '${localizations.formatDecimal(day)}, ${localizations.formatFullDate(dayToBuild)}',
                   selected: isSelectedDay,
                   child: ExcludeSemantics(
-                    child: Text(day.toString(), style: itemStyle),
+                    child:
+                        Text(day.toString().toPersianDigit(), style: itemStyle),
                   ),
                 ),
               ),
@@ -380,7 +386,7 @@ class CalendarDayPicker extends StatelessWidget {
                 child: Center(
                   child: ExcludeSemantics(
                     child: Text(
-                      "${pDate.monthname}  ${pDate.year}",
+                      "${pDate.monthname}  ${pDate.year}".toPersianDigit(),
                       style: themeData.textTheme.headline5,
                     ),
                   ),
@@ -786,7 +792,8 @@ class _CalendarYearPickerState extends State<CalendarYearPicker> {
           child: Center(
             child: Semantics(
               selected: isSelected,
-              child: Text(pYear.year.toString(), style: itemStyle),
+              child: Text(pYear.year.toString().toPersianDigit(),
+                  style: itemStyle),
             ),
           ),
         );
@@ -1007,21 +1014,24 @@ class JalaliTableCalendar extends StatefulWidget {
   final MarkerBuilder? marker;
   final Map<DateTime, List>? events;
   final OnDaySelected? onDaySelected;
+  final DateTime initialDate;
 
-  JalaliTableCalendar(
-      {required this.context,
-      this.selectableDayPredicate,
-      this.selectedFormat,
-      this.locale,
-      this.initialDatePickerMode = DatePickerModeCalendar.day,
-      this.textDirection = TextDirection.rtl,
-      this.convertToGregorian = false,
-      this.showTimePicker = false,
-      this.hour24Format = false,
-      this.initialTime,
-      this.marker,
-      this.events,
-      this.onDaySelected});
+  JalaliTableCalendar({
+    required this.context,
+    required this.initialDate,
+    this.selectableDayPredicate,
+    this.selectedFormat,
+    this.locale,
+    this.initialDatePickerMode = DatePickerModeCalendar.day,
+    this.textDirection = TextDirection.rtl,
+    this.convertToGregorian = false,
+    this.showTimePicker = false,
+    this.hour24Format = false,
+    this.initialTime,
+    this.marker,
+    this.events,
+    this.onDaySelected,
+  });
 
   @override
   _JalaliTableCalendarState createState() => _JalaliTableCalendarState();
@@ -1030,9 +1040,10 @@ class JalaliTableCalendar extends StatefulWidget {
 class _JalaliTableCalendarState extends State<JalaliTableCalendar> {
   @override
   Widget build(BuildContext context) {
-    DateTime initialDate = DateTime.now();
-    DateTime firstDate = DateTime(1700);
-    DateTime lastDate = DateTime(2200);
+    // DateTime initialDate = DateTime.now();
+    DateTime firstDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    DateTime lastDate = DateTime(DateTime.now().year, DateTime.now().month + 1);
     Map<DateTime, List>? formattedEvents = {};
     if (widget.events != null) {
       widget.events!.forEach((key, value) {
@@ -1040,21 +1051,21 @@ class _JalaliTableCalendarState extends State<JalaliTableCalendar> {
       });
     }
 
-    assert(!initialDate.isBefore(firstDate),
+    assert(!widget.initialDate.isBefore(firstDate),
         'initialDate must be on or after firstDate');
-    assert(!initialDate.isAfter(lastDate),
+    assert(!widget.initialDate.isAfter(lastDate),
         'initialDate must be on or before lastDate');
     assert(
         !firstDate.isAfter(lastDate), 'lastDate must be on or after firstDate');
     assert(
         widget.selectableDayPredicate == null ||
-            widget.selectableDayPredicate!(initialDate),
+            widget.selectableDayPredicate!(widget.initialDate),
         'Provided initialDate must satisfy provided selectableDayPredicate');
     // assert(context != null);
     // assert(debugCheckHasMaterialLocalizations(context));
 
     Widget child = _DatePickerCalendar(
-      initialDate: initialDate,
+      initialDate: widget.initialDate,
       firstDate: firstDate,
       lastDate: lastDate,
       selectableDayPredicate: widget.selectableDayPredicate,
