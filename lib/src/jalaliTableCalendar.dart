@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:jalali_table_calendar/src/jalali_day_conatiner_widget.dart';
 import 'package:jalali_table_calendar/src/persian_date.dart';
 import 'package:persian_number_utility/persian_number_utility.dart';
 
@@ -261,8 +262,8 @@ class CalendarDayPicker extends StatelessWidget {
     final PersianDate selectedPersianDate =
         PersianDate.pDate(gregorian: selectedDate.toString());
 
-    final PersianDate currentPDate =
-        PersianDate.pDate(gregorian: currentDate.toString());
+    // final PersianDate currentPDate =
+    //     PersianDate.pDate(gregorian: currentDate.toString());
 
     final List<Widget> labels = <Widget>[];
 
@@ -280,17 +281,23 @@ class CalendarDayPicker extends StatelessWidget {
     var startDay = dayShort.indexOf(pDate.weekdayname);
 
     labels.addAll(_getDayHeaders());
+
+    ///Start For labels
     for (int i = 0; true; i += 1) {
       final int day = i - startDay + 1;
+
       if (day > daysInMonth) break;
       if (day < 1) {
         labels.add(Container());
       } else {
         var pDay = _digits(day, 2);
+
         var jtgData = date.jalaliToGregorian(
             getPearData.year!, getPearData.month!, int.parse(pDay));
+
         final DateTime dayToBuild =
             DateTime(jtgData[0], jtgData[1], jtgData[2]);
+
         final PersianDate getHoliday =
             PersianDate.pDate(gregorian: dayToBuild.toString());
 
@@ -299,66 +306,49 @@ class CalendarDayPicker extends StatelessWidget {
             (selectableDayPredicate != null &&
                 !selectableDayPredicate!(dayToBuild));
 
-        BoxDecoration? decoration;
-        TextStyle? itemStyle = themeData.textTheme.bodyText1;
-
+        // BoxDecoration? decoration;
+        //
+        // TextStyle? itemStyle = themeData.textTheme.bodyText1;
+        //
+        ///Checks if the current day is selected by comparing its year, month, and day with the selected Persian date.
+        /// Returns true if they match.
         final bool isSelectedDay =
             selectedPersianDate.year == getPearData.year &&
                 selectedPersianDate.month == getPearData.month &&
                 selectedPersianDate.day == day;
-        if (isSelectedDay) {
-          // The selected day gets a circle background highlight, and a contrasting text color.
-          itemStyle = themeData.textTheme.bodyText2
-              ?.copyWith(color: themeData.scaffoldBackgroundColor);
-          decoration = BoxDecoration(
-              color: themeData.primaryColor, shape: BoxShape.circle);
-        } else if (disabled) {
-          itemStyle = themeData.textTheme.bodyText2!
-              .copyWith(color: themeData.disabledColor);
-        } else if (currentPDate.year == getPearData.year &&
-            currentPDate.month == getPearData.month &&
-            currentPDate.day == day) {
-          // The current day gets a different text color.
-          itemStyle = themeData.textTheme.bodyText2!
-              .copyWith(color: themeData.primaryColor);
-        } else if (getHoliday.isHoliday) {
-          // The current day gets a different text color.
-          itemStyle =
-              themeData.textTheme.bodyText2!.copyWith(color: Colors.red);
-        }
+
+        // if (isSelectedDay) {
+        // } else if (disabled) {
+        //   itemStyle = themeData.textTheme.bodyText2!
+        //       .copyWith(color: themeData.disabledColor);
+        // } else if (currentPDate.year == getPearData.year &&
+        //     currentPDate.month == getPearData.month &&
+        //     currentPDate.day == day) {
+        //   // The current day gets a different text color.
+        //   itemStyle = themeData.textTheme.bodyText2!
+        //       .copyWith(color: themeData.primaryColor);
+        // } else if (getHoliday.isHoliday) {
+        //   // The current day gets a different text color.
+        //   itemStyle =
+        //       themeData.textTheme.bodyText2!.copyWith(color: Colors.red);
+        // }
 
         // prepare to events to return to view
-        List? dayEvents = [];
-        if (events![dayToBuild] != null) dayEvents = events![dayToBuild];
-        //get Marker for day
-        Widget mark = marker!(dayToBuild, dayEvents);
-        Widget dayWidget = Container(
-          decoration: decoration,
-          child: Stack(
-            children: [
-              Center(
-                child: Semantics(
-                  // We want the day of month to be spoken first irrespective of the
-                  // locale-specific preferences or TextDirection. This is because
-                  // an accessibility user is more likely to be interested in the
-                  // day of month before the rest of the date, as they are looking
-                  // for the day of month. To do that we prepend day of month to the
-                  // formatted full date.
-                  label:
-                      '${localizations.formatDecimal(day)}, ${localizations.formatFullDate(dayToBuild)}',
-                  selected: isSelectedDay,
-                  child: ExcludeSemantics(
-                    child:
-                        Text(day.toString().toPersianDigit(), style: itemStyle),
-                  ),
-                ),
-              ),
-              if (marker != null &&
-                  events != null &&
-                  events![dayToBuild] != null)
-                mark
-            ],
-          ),
+        // List? dayEvents = [];
+        // if (events![dayToBuild] != null) dayEvents = events![dayToBuild];
+        // //get Marker for day
+        // Widget mark = marker!(dayToBuild, dayEvents);
+
+        Widget dayWidget = JalaliDayContainerWidget(
+          onChanged: onChanged,
+          localizations: localizations,
+          marker: marker,
+          isHoliday: getHoliday.isHoliday,
+          isSelectedDay: isSelectedDay,
+          disabled: disabled,
+          dayToBuild: dayToBuild,
+          day: day,
+          events: events,
         );
 
         if (!disabled) {
@@ -375,6 +365,8 @@ class CalendarDayPicker extends StatelessWidget {
       }
     }
 
+    ///end For labels
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Directionality(
@@ -387,7 +379,7 @@ class CalendarDayPicker extends StatelessWidget {
                   child: ExcludeSemantics(
                     child: Text(
                       "${pDate.monthname}  ${pDate.year}".toPersianDigit(),
-                      style: themeData.textTheme.headline5,
+                      style: themeData.textTheme.subtitle1,
                     ),
                   ),
                 ),
@@ -688,6 +680,7 @@ class _CalendarMonthPickerState extends State<CalendarMonthPicker>
   void dispose() {
     _timer?.cancel();
     _dayPickerController?.dispose();
+    _chevronOpacityController.dispose();
     calendarInitialized = false;
     super.dispose();
   }
@@ -1043,7 +1036,8 @@ class _JalaliTableCalendarState extends State<JalaliTableCalendar> {
     // DateTime initialDate = DateTime.now();
     DateTime firstDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    DateTime lastDate = DateTime(DateTime.now().year, DateTime.now().month + 1);
+    DateTime lastDate = DateTime(
+        DateTime.now().year, DateTime.now().month + 2, DateTime.now().day);
     Map<DateTime, List>? formattedEvents = {};
     if (widget.events != null) {
       widget.events!.forEach((key, value) {
