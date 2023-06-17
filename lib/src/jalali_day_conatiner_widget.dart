@@ -35,7 +35,6 @@ class JalaliDayContainerWidget extends StatelessWidget {
   Widget _widget() {
     if (disabled) {
       return _disabledDayContainer();
-    } else if (isHoliday) {
     } else if (marker != null &&
         events != null &&
         events![dayToBuild] != null) {
@@ -84,7 +83,7 @@ class JalaliDayContainerWidget extends StatelessWidget {
       backgroundColor: color,
       borderColor: color,
       borderRadius: 16,
-      ballonPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+      ballonPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
       // maxHeight: 150,
       child: _containerBase(
         day.toString(),

@@ -1036,8 +1036,7 @@ class _JalaliTableCalendarState extends State<JalaliTableCalendar> {
     // DateTime initialDate = DateTime.now();
     DateTime firstDate =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    DateTime lastDate = DateTime(
-        DateTime.now().year, DateTime.now().month + 2, DateTime.now().day);
+    DateTime lastDate = DateTime.now().add(Duration(days: 40));
     Map<DateTime, List>? formattedEvents = {};
     if (widget.events != null) {
       widget.events!.forEach((key, value) {
