@@ -535,15 +535,15 @@ class _CalendarMonthPickerState extends State<CalendarMonthPicker>
   Widget _buildItems(BuildContext context, int index) {
     DateTime month = _addMonthsToMonthDate(widget.firstDate, index);
 
-    final PersianDate selectedPersianDate = PersianDate.pDate(
-        gregorian: widget.selectedDate.toString()); // To Edit Month Display
+    // final PersianDate selectedPersianDate = PersianDate.pDate(
+    //     gregorian: widget.selectedDate.toString()); // To Edit Month Display
 
-    if (selectedPersianDate.day! >= 1 &&
-        selectedPersianDate.day! < 12 &&
-        !calendarInitialized) {
-      month = _addMonthsToMonthDate(widget.firstDate, index + 1);
-      _handleNextMonth(initialized: false);
-    }
+    // if (selectedPersianDate.day! >= 1 &&
+    //     selectedPersianDate.day! < 12 &&
+    //     !calendarInitialized) {
+    //   month = _addMonthsToMonthDate(widget.firstDate, index + 1);
+    //   _handleNextMonth(initialized: false);
+    // }
 
     // if (!widget.isSelected && !changed) {
     // }
