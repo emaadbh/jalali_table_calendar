@@ -143,7 +143,8 @@ class CalendarDayPicker extends StatelessWidget {
       color = dayHeader == 'ج' || dayHeader == 'Su' ? Colors.red : Colors.black;
       result.add(ExcludeSemantics(
         child: Center(
-            child: Text(dayHeader, style: headerStyle.copyWith(color: color))),
+            child: Text(dayHeader,
+                style: headerStyle.copyWith(color: color, fontSize: 14))),
       ));
     }
     return result;
@@ -256,9 +257,6 @@ class CalendarDayPicker extends StatelessWidget {
     final PersianDate selectedPersianDate =
         PersianDate.pDate(gregorian: selectedDate.toString());
 
-    final PersianDate currentPDate =
-        PersianDate.pDate(gregorian: currentDate.toString());
-
     final List<Widget> labels = <Widget>[];
 
     var pDay = _digits(mDay, 2);
@@ -294,31 +292,12 @@ class CalendarDayPicker extends StatelessWidget {
             (selectableDayPredicate != null &&
                 !selectableDayPredicate!(dayToBuild));
 
-        BoxDecoration? decoration;
-        itemStyle = themeData.textTheme.titleLarge;
+        // BoxDecoration? decoration;
+        // itemStyle = themeData.textTheme.titleLarge;
         final bool isSelectedDay =
             selectedPersianDate.year == getPearData.year &&
                 selectedPersianDate.month == getPearData.month &&
                 selectedPersianDate.day == day;
-        if (isSelectedDay) {
-          // The selected day gets a circle background highlight, and a contrasting text color.
-          itemStyle =
-              itemStyle?.copyWith(color: themeData.scaffoldBackgroundColor);
-          decoration = BoxDecoration(
-            color: themeData.primaryColor,
-            shape: BoxShape.circle,
-          );
-        } else if (disabled) {
-          itemStyle = itemStyle!.copyWith(color: themeData.disabledColor);
-        } else if (currentPDate.year == getPearData.year &&
-            currentPDate.month == getPearData.month &&
-            currentPDate.day == day) {
-          // The current day gets a different text color.
-          itemStyle = itemStyle!.copyWith(color: themeData.primaryColor);
-        } else if (getHoliday.isHoliday) {
-          // The current day gets a different text color.
-          itemStyle = itemStyle!.copyWith(color: Colors.red);
-        }
 
         // prepare to events to return to view
         List? dayEvents = [];

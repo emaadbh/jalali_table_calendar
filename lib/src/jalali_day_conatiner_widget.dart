@@ -145,7 +145,7 @@ class JalaliDayContainerWidget extends StatelessWidget {
     Color background = Colors.white,
   }) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
+      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       decoration: BoxDecoration(
         border: Border.all(color: color),
         borderRadius: BorderRadius.circular(8),

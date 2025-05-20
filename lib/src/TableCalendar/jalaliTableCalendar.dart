@@ -112,8 +112,9 @@ class _JalaliTableCalendarState extends State<JalaliTableCalendar> {
   @override
   Widget build(BuildContext context) {
     DateTime initialDate = DateTime.now();
-    DateTime firstDate = DateTime(1700);
-    DateTime lastDate = DateTime(2200);
+    DateTime firstDate =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    DateTime lastDate = DateTime.now().add(Duration(days: 70));
     Map<DateTime, List>? formattedEvents = {};
     if (widget.events != null) {
       widget.events!.forEach((key, value) {
